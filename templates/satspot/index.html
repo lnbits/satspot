@@ -1,0 +1,110 @@
+{% extends "base.html" %} {% from "macros.jinja" import window_vars with context
+%} {% block scripts %} {{ window_vars(user) }}
+<script src="{{ static_url_for('satspot/static', path='js/index.js') }}"></script>
+{% endblock %} {% block page %}
+<div class="row q-col-gutter-md">
+  <div class="col-12 col-md-7 q-gutter-y-md">
+    <q-card>
+      <q-card-section>
+        <q-btn
+          class="q-mt-md q-ml-md"
+          @click="formDialogSatspot.show = true"
+          color="primary"
+          >Create satspot game</q-btn
+        >
+      </q-card-section>
+    </q-card>
+  </div>
+
+  <div class="col-12 col-md-5 q-gutter-y-md">
+    <q-card>
+      <q-card-section>
+        <h6 class="text-subtitle1 q-my-none">
+          {{SITE_TITLE}} Satspot extension
+        </h6>
+      </q-card-section>
+      <q-card-section class="q-pa-none">
+        <q-separator></q-separator>
+        <q-list>
+          {% include "satspot/_api_docs.html" %}
+        </q-list>
+      </q-card-section>
+    </q-card>
+  </div>
+
+  <q-dialog
+    v-model="formDialogSatspot.show"
+    position="top"
+    @hide="closeFormDialog"
+  >
+    <q-card class="q-pa-lg q-pt-xl lnbits__dialog-card">
+      <q-form @submit="createGame" class="q-gutter-md">
+        <q-input
+          filled
+          dense
+          v-model.trim="formDialogSatspot.data.title"
+          type="text"
+          label="Title *"
+        ></q-input>
+
+        <div class="row">
+          <div class="col">
+            <q-input
+              class="q-pr-xs"
+              filled
+              dense
+              v-model.trim="formDialogSatspot.data.closing_date"
+              type="number"
+              label="Closing date"
+            ></q-input>
+          </div>
+          <div class="col">
+          <q-select
+          filled
+          dense
+          emit-value
+          v-model="formDialogSatspot.data.wallet"
+          :options="g.user.walletOptions"
+          label="Wallet *"
+        ></q-select>
+      </div>
+
+          <div class="col">
+            <q-input
+              class="q-pl-xs"
+              filled
+              dense
+              v-model.trim="formDialogSatspot.data.buy_in"
+              type="number"
+              label="Buy in"
+            ></q-input>
+          </div>
+          <div class="col">
+            <q-input
+              class="q-pl-xs"
+              filled
+              dense
+              v-model.trim="formDialogSatspot.data.haircut"
+              type="number"
+              label="Buy in"
+            ></q-input>
+          </div>
+        </div>
+        <div>
+          <q-btn
+            unelevated
+            color="primary"
+            :disable="
+              formDialogSatspot.data.title == null || formDialogSatspot.data.number_of_players > satspotSettings.max_players || formDialogSatspot.data.buy_in > satspotSettings.max_bet"
+            type="submit"
+            >Create satspot</q-btn
+          >
+          <q-btn v-close-popup flat color="grey" class="q-ml-auto"
+            >Cancel</q-btn
+          >
+        </div>
+      </q-form>
+    </q-card>
+  </q-dialog>
+</div>
+{% endblock %}
