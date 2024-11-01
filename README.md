@@ -1,4 +1,4 @@
-# <img src="/static/image/satspot.png" style="max-width: 40px;"> Satspot - <small>[LNbits](https://github.com/lnbits/lnbits) extension</small>
+# <img src="/static/image/satspot.png" style="width:40px;"> Satspot - <small>[LNbits](https://github.com/lnbits/lnbits) extension</small>
 
 <small>For more about LNBits extension check [this tutorial](https://github.com/lnbits/lnbits/wiki/LNbits-Extensions)</small>
 
