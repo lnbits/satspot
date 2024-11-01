@@ -20,3 +20,7 @@ class Satspot(BaseModel):
     players: str = ""
     completed: bool = False
     created_at: datetime = datetime.now(timezone.utc)
+
+class JoinSatspotGame(BaseModel):
+    game_id: str = Query(None)
+    ln_address: str = Query(None)
