@@ -1,6 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
+from fastapi import Query
 from pydantic import BaseModel
 
 class CreateSatspot(BaseModel):
@@ -8,7 +9,6 @@ class CreateSatspot(BaseModel):
     haircut: int = 0 # This is a percentage
     closing_date: datetime = datetime.now(timezone.utc) + timedelta(days=1)
     buy_in: int = 0
-
 
 class Satspot(BaseModel):
     id: Optional[str] = None
