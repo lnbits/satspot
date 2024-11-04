@@ -1,8 +1,42 @@
+const mapSatspots = obj => {
+  obj.closing_date = Quasar.date.formatDate(new Date(obj.closing_date), 'YYYY-MM-DD HH:mm')
+  return obj
+}
+
+
 window.app = Vue.createApp({
   el: '#vue',
   mixins: [windowMixin],
   data() {
     return {
+      satspots: [],
+      satspotsTable: {
+        columns: [
+          {name: 'id', align: 'left', label: 'ID', field: 'id'},
+          {name: 'name', align: 'left', label: 'Name', field: 'name'},
+          {
+            name: 'closing_date',
+            align: 'right',
+            label: 'Closing Date',
+            field: 'closing_date'
+          },
+          {
+            name: 'buy_in',
+            align: 'left',
+            label: 'buy_in',
+            field: 'buy_in'
+          },
+          {
+            name: 'players',
+            align: 'left',
+            label: 'players',
+            field: 'players'
+          }
+        ],
+        pagination: {
+          rowsPerPage: 10
+        }
+      },
       formDialogSatspot: {
         show: false,
         fixedAmount: true,
@@ -15,56 +49,20 @@ window.app = Vue.createApp({
     }
   },
   methods: {
-    async saveSatspotSettings() {
-      let settings = {
-        enabled: this.satspotSettings.enabled,
-        haircut: this.satspotSettings.haircut,
-        max_players: this.satspotSettings.max_players,
-        max_bet: this.satspotSettings.max_bet
-      }
-      let method = ''
-      if (this.satspotSettings.id != null) {
-        settings.id = this.satspotSettings.id
-        settings.wallet_id = this.satspotSettings.wallet_id
-        settings.user_id = this.g.user.id
-        method = 'PUT'
-      } else {
-        method = 'POST'
-      }
-      console.log(this.g.user)
-      await LNbits.api
-        .request(
-          method,
-          '/satspot/api/v1/satspot/settings',
-          this.g.user.wallets[0].adminkey,
-          settings
-        )
-        .then(response => {
-          this.satspotSettings = response.data
-          Quasar.Notify.create({
-            type: 'positive',
-            message: 'Satspot settings saved!'
-          })
-        })
-        .catch(err => {
-          LNbits.utils.notifyApiError(err)
-        })
+    exportCSV() {
+      LNbits.utils.exportCSV(this.satspotsTable.columns, this.satspots)
     },
-    async getSatspotSettings() {
+    async getSatspotGames() {
       await LNbits.api
         .request(
           'GET',
-          '/satspot/api/v1/satspot/settings',
+          '/satspot/api/v1/satspot',
           this.g.user.wallets[0].adminkey
         )
         .then(response => {
-          console.log(response.data)
-          this.satspotSettings.id = response.data.id
-          this.satspotSettings.enabled = response.data.enabled
-          this.satspotSettings.haircut = response.data.haircut
-          this.satspotSettings.max_players = response.data.max_players
-          this.satspotSettings.max_bet = response.data.max_bet
-          this.satspotSettings.wallet_id = response.data.wallet_id
+          this.satspots = response.data.map(obj => {
+            return mapSatspots(obj)
+          })
         })
         .catch(err => {
           LNbits.utils.notifyApiError(err)
@@ -110,7 +108,7 @@ window.app = Vue.createApp({
           this.activeGame = true
 
           const url = new URL(window.location)
-          url.pathname = `/satspot/satspot/${this.satspotSettings.id}/${response.data}`
+          url.pathname = `/satspot/satspot/${response.data}`
           window.open(url)
         }
       } catch (error) {
@@ -120,6 +118,6 @@ window.app = Vue.createApp({
   },
   async created() {
     // CHECK COINFLIP SETTINGS
-    await this.getSatspotSettings()
+    await this.getSatspotGames()
   }
 })

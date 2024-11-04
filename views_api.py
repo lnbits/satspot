@@ -9,7 +9,8 @@ from starlette.exceptions import HTTPException
 
 from .crud import (
     create_satspot,
-    get_satspot
+    get_satspot,
+    get_satspots
 )
 from .helpers import get_pr
 from .models import (
@@ -27,7 +28,8 @@ async def api_create_satspot(
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="Haircut must be between 0 and 50"
         )
-    satspot.wallet = key_info.id
+    satspot.wallet = key_info.wallet.id
+    satspot.user = key_info.wallet.user
     satspot = await create_satspot(data)
     if not satspot:
         raise HTTPException(
@@ -35,6 +37,22 @@ async def api_create_satspot(
         )
     return satspot.id
 
+@satspot_api_router.get("/api/v1/satspot")
+async def api_get_satspots(
+    key_info: WalletTypeInfo = Depends(require_admin_key),
+):
+    user = get_user(key_info.wallet.user)
+
+    if not user:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail="Failed to get user"
+        )
+    satspots = await get_satspots(user)
+    if not satspots:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail="Failed to get satspots"
+        )
+    return satspots
 
 @satspot_api_router.post("/api/v1/satspot/join/", status_code=HTTPStatus.OK)
 async def api_join_satspot(data: JoinSatspotGame):
