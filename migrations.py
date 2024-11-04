@@ -8,7 +8,7 @@ async def m001_add_satspot(db):
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             wallet TEXT NOT NULL,
-            haircut INTEGER NOT NULL MINVALUE 0 MAXVALUE 50,
+            haircut INTEGER NOT NULL MAXVALUE 50 DEFAULT 5,
             closing_date TIMESTAMP NOT NULL,
             buy_in INTEGER NOT NULL,
             players TEXT NOT NULL,
