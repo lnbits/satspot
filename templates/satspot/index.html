@@ -33,10 +33,10 @@
             <q-tr :props="props">
               <q-th auto-width></q-th>
               <q-th
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props" 
-              v-text="col.label"
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+                v-text="col.label"
               ></q-th>
               <q-th auto-width></q-th>
             </q-tr>
@@ -71,14 +71,14 @@
                   color="pink"
                 ></q-btn>
                 <q-btn
-                flat
-                dense
-                size="sm"
-                @click="openPlayers(props.row.players)"
-                icon="groups"
-                color="secondary"
-              ><q-tooltip>View players</q-tooltip>
-            </q-btn>
+                  flat
+                  dense
+                  size="sm"
+                  @click="openPlayers(props.row.players)"
+                  icon="groups"
+                  color="secondary"
+                  ><q-tooltip>View players</q-tooltip>
+                </q-btn>
               </q-td>
             </q-tr>
           </template>
@@ -124,34 +124,56 @@
 
         <div class="row">
           <div class="col">
-
             <q-input dense filled v-model="formDialogSatspot.data.closing_date">
-              
               <template v-slot:prepend>
                 <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="formDialogSatspot.data.closing_date" mask="YYYY-MM-DD HH:mm">
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date
+                      v-model="formDialogSatspot.data.closing_date"
+                      mask="YYYY-MM-DD HH:mm"
+                    >
                       <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
+                        <q-btn
+                          v-close-popup
+                          label="Close"
+                          color="primary"
+                          flat
+                        />
                       </div>
                     </q-date>
                   </q-popup-proxy>
                 </q-icon>
               </template>
-        
+
               <template v-slot:append>
                 <q-icon name="access_time" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-time v-model="formDialogSatspot.data.closing_date" mask="YYYY-MM-DD HH:mm" format24h>
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-time
+                      v-model="formDialogSatspot.data.closing_date"
+                      mask="YYYY-MM-DD HH:mm"
+                      format24h
+                    >
                       <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
+                        <q-btn
+                          v-close-popup
+                          label="Close"
+                          color="primary"
+                          flat
+                        />
                       </div>
                     </q-time>
                   </q-popup-proxy>
                 </q-icon>
               </template>
             </q-input>
-
           </div>
           <div class="col">
             <q-select

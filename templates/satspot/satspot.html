@@ -14,8 +14,8 @@
           </q-badge>
         </center>
       </div>
-      </div>
-      <div class="row">
+    </div>
+    <div class="row">
       <div class="col">
         <center>
           <q-badge outline size="xl" color="secondary">
@@ -130,10 +130,13 @@
           "",
         );
         if (response.data) {
-          this.satspot = response.data
-          const date = new Date(this.satspot.closing_date)
-          this.satspot.closing_date = date.toISOString().replace('T', ' ').slice(0, 19);
-          this.activeGame = true
+          this.satspot = response.data;
+          const date = new Date(this.satspot.closing_date);
+          this.satspot.closing_date = date
+            .toISOString()
+            .replace("T", " ")
+            .slice(0, 19);
+          this.activeGame = true;
         }
       },
       async joinGame() {
@@ -166,7 +169,7 @@
         const ws = new WebSocket(url);
         ws.addEventListener("message", async ({ data }) => {
           data = JSON.parse(data);
-          if (data['pending'] == false) {
+          if (data["pending"] == false) {
             this.$q.notify({
               type: "positive",
               message: "Invoice paid, you joined the game!",

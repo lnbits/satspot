@@ -1,11 +1,11 @@
 const mapSatspots = (obj) => {
-  obj._data = _.clone(obj)
+  obj._data = _.clone(obj);
   obj.closing_date = Quasar.date.formatDate(
     new Date(obj.closing_date),
     "YYYY-MM-DD HH:mm",
-  )
-  return obj
-}
+  );
+  return obj;
+};
 
 window.app = Vue.createApp({
   el: "#vue",
@@ -44,7 +44,7 @@ window.app = Vue.createApp({
             align: "left",
             label: "completed",
             field: "completed",
-          }
+          },
         ],
         pagination: {
           rowsPerPage: 10,
@@ -60,11 +60,11 @@ window.app = Vue.createApp({
           wallet: null,
         },
       },
-    }
+    };
   },
   methods: {
     exportCSV() {
-      LNbits.utils.exportCSV(this.satspotsTable.columns, this.satspots)
+      LNbits.utils.exportCSV(this.satspotsTable.columns, this.satspots);
     },
     async getSatspotGames() {
       await LNbits.api
@@ -74,68 +74,71 @@ window.app = Vue.createApp({
           this.g.user.wallets[0].adminkey,
         )
         .then((response) => {
-          if(response.data != null) {
-            this.satspots = response.data
+          if (response.data != null) {
+            this.satspots = response.data;
           }
         })
         .catch((err) => {
-          LNbits.utils.notifyApiError(err)
-        })
+          LNbits.utils.notifyApiError(err);
+        });
     },
     async openPlayers(players) {
-      this.players.show = true
-      this.players.data = players.split(',')
+      this.players.show = true;
+      this.players.data = players.split(",");
     },
     async createGame() {
-      const date = new Date(this.formDialogSatspot.data.closing_date)
-      const unixTimestamp = Math.floor(date.getTime() / 1000)
+      const date = new Date(this.formDialogSatspot.data.closing_date);
+      const unixTimestamp = Math.floor(date.getTime() / 1000);
       const data = {
         name: this.formDialogSatspot.data.name,
         buy_in: this.formDialogSatspot.data.buy_in,
         closing_date: parseInt(unixTimestamp),
-        haircut: this.formDialogSatspot.data.haircut
-      }
+        haircut: this.formDialogSatspot.data.haircut,
+      };
       const wallet = _.findWhere(this.g.user.wallets, {
-        id: this.formDialogSatspot.data.wallet
-      })
+        id: this.formDialogSatspot.data.wallet,
+      });
       try {
         const response = await LNbits.api.request(
           "POST",
           "/satspot/api/v1/satspot",
           wallet.adminkey,
           data,
-        )
+        );
         if (response.data) {
-          this.satspots = response.data.map(mapSatspots)
-          this.formDialogSatspot.show = false
+          this.satspots = response.data.map(mapSatspots);
+          this.formDialogSatspot.show = false;
         }
       } catch (error) {
-        LNbits.utils.notifyApiError(error)
+        LNbits.utils.notifyApiError(error);
       }
     },
     deleteSatspot(satpotid) {
-      const satspot = _.findWhere(this.satspots, {id: satpotid})
+      const satspot = _.findWhere(this.satspots, { id: satpotid });
 
       LNbits.utils
-        .confirmDialog('Are you sure you want to delete this satspot?')
+        .confirmDialog("Are you sure you want to delete this satspot?")
         .onOk(() => {
           LNbits.api
             .request(
-              'DELETE',
-              '/satspot/api/v1/satspot/' + satpotid,
-              _.findWhere(this.g.user.wallets, {id: satspot.wallet}).adminkey
+              "DELETE",
+              "/satspot/api/v1/satspot/" + satpotid,
+              _.findWhere(this.g.user.wallets, { id: satspot.wallet }).adminkey,
             )
-            .then(response => {
-              this.satspots = _.reject(this.satspots, obj => obj.id === satpotid)
+            .then((response) => {
+              this.satspots = _.reject(
+                this.satspots,
+                (obj) => obj.id === satpotid,
+              );
             })
-            .catch(err => {
-              LNbits.utils.notifyApiError(err)
-            })
-        })
+            .catch((err) => {
+              LNbits.utils.notifyApiError(err);
+            });
+        });
     },
   },
   async created() {
     // CHECK COINFLIP SETTINGS
-    await this.getSatspotGames()
+    await this.getSatspotGames();
   },
-})
+});

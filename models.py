@@ -24,6 +24,7 @@ class Satspot(BaseModel):
     completed: bool = False
     created_at: datetime = datetime.now(timezone.utc)
 
+
 class Getgame(BaseModel):
     id: Optional[str] = None
     name: str
@@ -31,6 +32,7 @@ class Getgame(BaseModel):
     buy_in: int = 0
     haircut: int = 0
     completed: bool = False
+
 
 class JoinSatspotGame(BaseModel):
     satspot_id: str = Query(None)

@@ -1,12 +1,16 @@
-import httpx
 import random
-from lnbits.core.views.api import api_lnurlscan
 from datetime import datetime
+
+import httpx
+from lnbits.core.services import pay_invoice
+from lnbits.core.views.api import api_lnurlscan
+
 from .crud import (
     update_satspot,
 )
-from lnbits.core.services import pay_invoice
 from .helpers import pay_invoice
+
+
 async def get_pr(ln_address, amount):
     data = await api_lnurlscan(ln_address)
     if data.get("status") == "ERROR":
@@ -20,8 +24,12 @@ async def get_pr(ln_address, amount):
     except Exception:
         return None
 
+
 async def calculate_winner(satspot):
-    if datetime.now().timestamp() > satspot.closing_date.timestamp() and satspot.completed == False:
+    if (
+        datetime.now().timestamp() > satspot.closing_date.timestamp()
+        and satspot.completed == False
+    ):
         satspot_players = satspot.players.split(",")
         winner = random.choice(satspot_players)
         satspot.players = winner

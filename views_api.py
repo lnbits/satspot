@@ -1,28 +1,24 @@
 from datetime import datetime
-
 from http import HTTPStatus
+
 from fastapi import APIRouter, Depends
 from lnbits.core.crud import get_user
 from lnbits.core.models import WalletTypeInfo
 from lnbits.core.services import create_invoice
 from lnbits.decorators import require_admin_key
 from starlette.exceptions import HTTPException
-from .helpers import get_pr
 
 from .crud import (
-    create_satspot, 
-    get_satspot, 
-    get_satspots, 
+    create_satspot,
     delete_satspot,
+    get_satspot,
+    get_satspots,
 )
-
-from .models import (
-    CreateSatspot,
-    JoinSatspotGame,
-    Getgame
-)
+from .helpers import get_pr
+from .models import CreateSatspot, Getgame, JoinSatspotGame
 
 satspot_api_router = APIRouter()
+
 
 @satspot_api_router.post("/api/v1/satspot", status_code=HTTPStatus.OK)
 async def api_create_satspot(
@@ -79,6 +75,7 @@ async def api_join_satspot(data: JoinSatspotGame):
         },
     )
     return {"payment_hash": payment.payment_hash, "payment_request": payment.bolt11}
+
 
 @satspot_api_router.delete("/api/v1/satspot/{satspot_id}")
 async def api_satspot_delete(
