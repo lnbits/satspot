@@ -1,21 +1,26 @@
-from http import HTTPStatus
+from datetime import datetime
 
+from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from lnbits.core.crud import get_user
 from lnbits.core.models import WalletTypeInfo
 from lnbits.core.services import create_invoice
 from lnbits.decorators import require_admin_key
 from starlette.exceptions import HTTPException
+from loguru import logger
+from .helpers import get_pr
 
 from .crud import (
-    create_satspot,
-    get_satspot,
-    get_satspots
+    create_satspot, 
+    get_satspot, 
+    get_satspots, 
+    delete_satspot,
 )
-from .helpers import get_pr
+
 from .models import (
     CreateSatspot,
     JoinSatspotGame,
+    Getgame
 )
 
 satspot_api_router = APIRouter()
@@ -26,37 +31,34 @@ async def api_create_satspot(
 ):
     if data.haircut < 0 or data.haircut > 50:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail="Haircut must be between 0 and 50"
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Haircut must be between 0 and 50",
         )
-    satspot.wallet = key_info.wallet.id
-    satspot.user = key_info.wallet.user
-    satspot = await create_satspot(data)
+    logger.debug(key_info.wallet)
+    satspot = await create_satspot(data, key_info.wallet.id, key_info.wallet.user)
     if not satspot:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="Failed to create satspot"
         )
-    return satspot.id
+    return satspot
+
 
 @satspot_api_router.get("/api/v1/satspot")
 async def api_get_satspots(
     key_info: WalletTypeInfo = Depends(require_admin_key),
 ):
-    user = get_user(key_info.wallet.user)
-
+    user = await get_user(key_info.wallet.user)
     if not user:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="Failed to get user"
         )
-    satspots = await get_satspots(user)
-    if not satspots:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail="Failed to get satspots"
-        )
+    satspots = await get_satspots(user.id)
     return satspots
+
 
 @satspot_api_router.post("/api/v1/satspot/join/", status_code=HTTPStatus.OK)
 async def api_join_satspot(data: JoinSatspotGame):
-    satspot_game = await get_satspot(data.game_id)
+    satspot_game = await get_satspot(data.satspot_id)
     if not satspot_game:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="No game found")
     if satspot_game.completed:
@@ -73,12 +75,30 @@ async def api_join_satspot(data: JoinSatspotGame):
         amount=satspot_game.buy_in,
         memo=f"Satspot {satspot_game.name} for {data.ln_address}",
         extra={
-            "tag": "satspot_satspot",
+            "tag": "satspot",
             "ln_address": data.ln_address,
-            "game_id": data.game_id,
+            "satspot_id": data.satspot_id,
         },
     )
     return {"payment_hash": payment.payment_hash, "payment_request": payment.bolt11}
+
+@satspot_api_router.delete("/api/v1/satspot/{satspot_id}")
+async def api_satspot_delete(
+    satspot_id: str,
+    key_info: WalletTypeInfo = Depends(require_admin_key),
+):
+    satspot = await get_satspot(satspot_id)
+    if not satspot:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Pay link does not exist."
+        )
+
+    if satspot.wallet != key_info.wallet.id:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail="Not your pay link."
+        )
+
+    await delete_satspot(satspot_id)
 
 
 @satspot_api_router.get(
@@ -90,6 +110,13 @@ async def api_get_satspot(satspot_id: str):
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail="Satspot game does not exist."
         )
-    if satspot.closing_date < db.timestamp_now:
+    if satspot.closing_date.timestamp() < datetime.now().timestamp():
         satspot.completed = True
-    return satspot
+    return Getgame(
+        id=satspot.id,
+        name=satspot.name,
+        closing_date=satspot.closing_date,
+        buy_in=satspot.buy_in,
+        haircut=satspot.haircut,
+        completed=satspot.completed,
+    )

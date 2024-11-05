@@ -5,15 +5,14 @@ from fastapi.responses import HTMLResponse
 from lnbits.core.models import User
 from lnbits.decorators import check_user_exists
 from lnbits.helpers import template_renderer
-
+from loguru import logger
 from .crud import get_satspot
+from .helpers import calculate_winner
 
 satspot_generic_router: APIRouter = APIRouter()
 
-
 def satspot_renderer():
     return template_renderer(["satspot/templates"])
-
 
 @satspot_generic_router.get("/", response_class=HTMLResponse)
 async def index(request: Request, user: User = Depends(check_user_exists)):
@@ -21,18 +20,14 @@ async def index(request: Request, user: User = Depends(check_user_exists)):
         "satspot/index.html", {"request": request, "user": user.json()}
     )
 
-@satspot_generic_router.get(
-    "/satspot/{game}", response_class=HTMLResponse
-)
-async def display_satspot(request: Request, game: str):
-    satspot = await get_satspot(game)
-    if not satspot:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Satspot game does not exist."
-        )
+@satspot_generic_router.get("/{satspot_id}", response_class=HTMLResponse)
+async def display_satspot(request: Request, satspot_id: str):
+    satspot = await get_satspot(satspot_id)
+    await calculate_winner(satspot)
     return satspot_renderer().TemplateResponse(
         "satspot/satspot.html",
         {
+            "satspot_id": satspot_id,
             "request": request,
         },
     )
