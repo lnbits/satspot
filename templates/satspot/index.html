@@ -70,6 +70,15 @@
                   icon="cancel"
                   color="pink"
                 ></q-btn>
+                <q-btn
+                flat
+                dense
+                size="sm"
+                @click="openPlayers(props.row.players)"
+                icon="groups"
+                color="secondary"
+              ><q-tooltip>View players</q-tooltip>
+            </q-btn>
               </q-td>
             </q-tr>
           </template>
@@ -91,6 +100,12 @@
       </q-card-section>
     </q-card>
   </div>
+
+  <q-dialog v-model="players.show" position="top">
+    <q-card class="q-pa-lg q-pt-xl lnbits__dialog-card">
+      <div v-text="players.data"></div>
+    </q-card>
+  </q-dialog>
 
   <q-dialog
     v-model="formDialogSatspot.show"

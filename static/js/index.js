@@ -13,6 +13,10 @@ window.app = Vue.createApp({
   data() {
     return {
       satspots: [],
+      players: {
+        show: false,
+        data: [],
+      },
       satspotsTable: {
         columns: [
           { name: "id", align: "left", label: "ID", field: "id" },
@@ -72,6 +76,10 @@ window.app = Vue.createApp({
         .catch((err) => {
           LNbits.utils.notifyApiError(err)
         })
+    },
+    async openPlayers(players) {
+      this.players.show = true
+      this.players.data = players.split(',')
     },
     async createGame() {
       const date = new Date(this.formDialogSatspot.data.closing_date)
