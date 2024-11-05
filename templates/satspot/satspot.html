@@ -130,9 +130,9 @@
           "",
         );
         if (response.data) {
-          console.log(response.data)
           this.satspot = response.data
-          this.satspot.closing_date = new Date(this.satspot.closing_date * 1000).toLocaleString()
+          const date = new Date(this.satspot.closing_date)
+          this.satspot.closing_date = date.toISOString().replace('T', ' ').slice(0, 19);
           this.activeGame = true
         }
       },
@@ -196,7 +196,7 @@
       },
     },
     async mounted() {
-      this.getGame();
+      await this.getGame();
     },
   });
 </script>
