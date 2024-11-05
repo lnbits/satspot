@@ -8,7 +8,6 @@ from lnbits.core.views.api import api_lnurlscan
 from .crud import (
     update_satspot,
 )
-from .helpers import pay_invoice
 
 
 async def get_pr(ln_address, amount):
@@ -28,7 +27,7 @@ async def get_pr(ln_address, amount):
 async def calculate_winner(satspot):
     if (
         datetime.now().timestamp() > satspot.closing_date.timestamp()
-        and satspot.completed == False
+        and not satspot.completed
     ):
         satspot_players = satspot.players.split(",")
         winner = random.choice(satspot_players)
