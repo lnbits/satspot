@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 from lnbits.core.models import Payment
-from lnbits.core.services import pay_invoice, websocket_updater
+from lnbits.core.services import pay_invoice
 from lnbits.tasks import register_invoice_listener
 
 from .crud import (
@@ -50,7 +50,6 @@ async def on_invoice_paid(payment: Payment) -> None:
                 max_sat=max_sat,
                 description="Refund. Satspot game was full.",
             )
-            await websocket_updater(payment.payment_hash, "refund")
             await calculate_winner(satspot)
             return
 
@@ -60,4 +59,3 @@ async def on_invoice_paid(payment: Payment) -> None:
         else:
             satspot.players = f"{satspot.players},{ln_address}"
         await update_satspot(satspot)
-        await websocket_updater(payment.payment_hash, "joined")
