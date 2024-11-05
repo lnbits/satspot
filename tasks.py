@@ -3,7 +3,6 @@ from datetime import datetime
 from lnbits.core.models import Payment
 from lnbits.core.services import pay_invoice
 from lnbits.tasks import register_invoice_listener
-
 from .crud import (
     get_satspot,
     update_satspot,
@@ -33,7 +32,7 @@ async def on_invoice_paid(payment: Payment) -> None:
             return
         await calculate_winner(satspot)
         # If player joins late send a refund
-        if int(datetime.now().timestamp()) > satspot.closing_date:
+        if datetime.now().timestamp() > satspot.closing_date.timestamp():
             satspot.completed = True
             await update_satspot(satspot)
 

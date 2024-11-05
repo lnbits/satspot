@@ -7,7 +7,6 @@ from lnbits.core.models import WalletTypeInfo
 from lnbits.core.services import create_invoice
 from lnbits.decorators import require_admin_key
 from starlette.exceptions import HTTPException
-from loguru import logger
 from .helpers import get_pr
 
 from .crud import (
@@ -34,7 +33,6 @@ async def api_create_satspot(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Haircut must be between 0 and 50",
         )
-    logger.debug(key_info.wallet)
     satspot = await create_satspot(data, key_info.wallet.id, key_info.wallet.user)
     if not satspot:
         raise HTTPException(

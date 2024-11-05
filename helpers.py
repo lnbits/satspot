@@ -7,7 +7,6 @@ from .crud import (
 )
 from lnbits.core.services import pay_invoice
 from .helpers import pay_invoice
-
 async def get_pr(ln_address, amount):
     data = await api_lnurlscan(ln_address)
     if data.get("status") == "ERROR":
@@ -38,7 +37,7 @@ async def calculate_winner(satspot):
         if not pr:
             return
         await pay_invoice(
-            wallet_id=satspot.wallet_id,
+            wallet_id=satspot.wallet,
             payment_request=pr,
             max_sat=max_sat,
             description=f"You flipping won the satspot {satspot.name}!",

@@ -1,6 +1,6 @@
 {% extends "public.html" %} {% block page %}
 <q-card class="fixed-center q-pa-xl" style="width: 600px">
-  <q-card-section class="q-pa-none" v-if="activeGame && !gameComplete">
+  <q-card-section class="q-pa-none" v-if="activeGame && !satspot.completed">
     <center>
       <h3 class="q-my-none q-mb-xl"><span v-text="satspot.name"></span></h3>
     </center>
@@ -57,10 +57,10 @@
     </q-form>
   </q-card-section>
 
-  <q-card-section v-if="gameComplete" class="q-pa-none">
+  <q-card-section v-if="satspot.completed" class="q-pa-none">
     <center>
       <h2 class="q-my-none">Game Complete</h2>
-      <h5 class="q-my-none"><span v-text="satspotWinner"></span> won!</h5>
+      <h5 class="q-my-none"><span v-text="winner"></span> won!</h5>
       <q-icon color="teal" name="check" size="30em"></q-icon>
     </center>
   </q-card-section>
@@ -102,6 +102,7 @@
         activeGame: false,
         gameComplete: false,
         satspotId: "{{ satspot_id }}",
+        winner: "{{ winner }}",
         paymentTick: false,
         satspot: {
           name: "",
@@ -123,7 +124,6 @@
         return urlParams.get(param);
       },
       async getGame() {
-        console.log(this.satspotId)
         const response = await LNbits.api.request(
           "GET",
           `/satspot/api/v1/satspot/satspot/${this.satspotId}`,

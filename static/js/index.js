@@ -38,6 +38,12 @@ window.app = Vue.createApp({
             align: "left",
             label: "haircut",
             field: "haircut",
+          },
+          {
+            name: "completed",
+            align: "left",
+            label: "completed",
+            field: "completed",
           }
         ],
         pagination: {
@@ -69,7 +75,6 @@ window.app = Vue.createApp({
         )
         .then((response) => {
           if(response.data != null) {
-            console.log(response.data)
             this.satspots = response.data
           }
         })
@@ -84,7 +89,6 @@ window.app = Vue.createApp({
     async createGame() {
       const date = new Date(this.formDialogSatspot.data.closing_date)
       const unixTimestamp = Math.floor(date.getTime() / 1000)
-      console.log(parseInt(unixTimestamp))
       const data = {
         name: this.formDialogSatspot.data.name,
         buy_in: this.formDialogSatspot.data.buy_in,
