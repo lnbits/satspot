@@ -13,10 +13,6 @@
   ],
   "images": [
     {
-      "uri": "https://raw.githubusercontent.com/lnbits/satspot/main/static/image/1.jpg",
-      "link": "https://www.youtube.com/embed/3f7RBIpTFlw?si=QuAhFPSYNrYiFZJe"
-    },
-    {
       "uri": "https://raw.githubusercontent.com/lnbits/satspot/main/static/image/1.png"
     },
     {
@@ -24,6 +20,15 @@
     },
     {
       "uri": "https://raw.githubusercontent.com/lnbits/satspot/main/static/image/3.png"
+    },
+    {
+      "uri": "https://raw.githubusercontent.com/lnbits/satspot/main/static/image/4.png"
+    },
+    {
+      "uri": "https://raw.githubusercontent.com/lnbits/satspot/main/static/image/5.png"
+    },
+    {
+      "uri": "https://raw.githubusercontent.com/lnbits/satspot/main/static/image/6.png"
     }
   ],
   "description_md": "https://raw.githubusercontent.com/lnbits/satspot/main/description.md",
