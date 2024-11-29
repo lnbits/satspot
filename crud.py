@@ -29,7 +29,7 @@ async def get_satspot(satspot_id: str) -> Satspot:
 
 async def get_satspots(user: str) -> List[Satspot]:
     return await db.fetchall(
-        "SELECT * FROM satspot.satspot WHERE user = :user",
+        "SELECT * FROM satspot.satspot WHERE 'user' = :user",
         {"user": user},
         Satspot,
     )
