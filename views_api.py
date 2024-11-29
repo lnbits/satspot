@@ -7,7 +7,7 @@ from lnbits.core.models import WalletTypeInfo
 from lnbits.core.services import create_invoice
 from lnbits.decorators import require_admin_key
 from starlette.exceptions import HTTPException
-
+from loguru import logger
 from .crud import (
     create_satspot,
     delete_satspot,
@@ -53,6 +53,7 @@ async def api_get_satspots(
 @satspot_api_router.post("/api/v1/satspot/join/", status_code=HTTPStatus.OK)
 async def api_join_satspot(data: JoinSatspotGame):
     satspot_game = await get_satspot(data.satspot_id)
+    logger.debug(satspot_game)
     if not satspot_game:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="No game found")
     if satspot_game.completed:
