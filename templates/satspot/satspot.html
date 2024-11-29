@@ -54,6 +54,19 @@
         @click="copyText"
         ><q-tooltip>Copy satspot link</q-tooltip></q-btn
       >
+      <q-btn
+        class="q-ml-lg q-mt-md"
+        unelevated
+        dense
+        size="col-md-5"
+        icon="help"
+        :color="($q.dark.isActive) ? 'grey-7' : 'grey-5'"
+        ><q-tooltip
+          >This is a Satspot game. <br />Paste in your LNaddress and pay the
+          invoice to join. <br />On the closing date you might win the pot.🤞
+          <br />(minus the registration fee)</q-tooltip
+        ></q-btn
+      >
     </q-form>
   </q-card-section>
 
