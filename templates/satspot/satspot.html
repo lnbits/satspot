@@ -1,40 +1,36 @@
 {% extends "public.html" %} {% block page %}
-<q-card class="fixed-center q-pa-xl" style="width: 600px">
+<q-card 
+  class="fixed-center q-pa-xl"
+  :style="{ width: $q.screen.lt.sm ? '100%' : '600px' }"
+>
   <q-card-section class="q-pa-none" v-if="activeGame && !satspot.completed">
     <center>
       <h3 class="q-my-none q-mb-xl"><span v-text="satspot.name"></span></h3>
     </center>
-    <div class="row q-ma-md">
-      <div class="col">
-        <center>
-          <q-badge outline size="xl" color="secondary">
-            <div class="text-subtitle1">
-              Closing date: <span v-text="satspot.closing_date"></span>
-            </div>
-          </q-badge>
-        </center>
+    <div class="row justify-center q-gutter-md">
+      <div class="col-auto">
+        <q-badge outline size="xl" color="secondary">
+          <div class="text-subtitle1">
+            Closing date: <span v-text="satspot.closing_date"></span>
+          </div>
+        </q-badge>
+      </div>
+      <div class="col-auto">
+        <q-badge outline size="xl" color="secondary">
+          <div class="text-subtitle1">
+            Buy In: <span v-text="satspot.buy_in"></span> sats
+          </div>
+        </q-badge>
+      </div>
+      <div class="col-auto">
+        <q-badge outline size="xl" color="secondary">
+          <div class="text-subtitle1">
+            Registration fee: <span v-text="satspot.haircut"></span> %
+          </div>
+        </q-badge>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <center>
-          <q-badge outline size="xl" color="secondary">
-            <div class="text-subtitle1">
-              Buy In: <span v-text="satspot.buy_in"></span> sats
-            </div>
-          </q-badge>
-        </center>
-      </div>
-      <div class="col">
-        <center>
-          <q-badge outline size="xl" color="secondary">
-            <div class="text-subtitle1">
-              Registration fee: <span v-text="satspot.haircut"></span> %
-            </div>
-          </q-badge>
-        </center>
-      </div>
-    </div>
+    
     <q-form @submit="joinGame" class="q-gutter-md">
       <q-input
         label="Your LNadress"

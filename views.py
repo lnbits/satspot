@@ -29,11 +29,12 @@ async def display_satspot(request: Request, satspot_id: str):
     else:
         winner = None
     await calculate_winner(satspot)
+    satspot = await get_satspot(satspot_id)
     return satspot_renderer().TemplateResponse(
         "satspot/satspot.html",
         {
             "satspot_id": satspot_id,
-            "winner": winner,
+            "winner": satspot.players,
             "request": request,
         },
     )
