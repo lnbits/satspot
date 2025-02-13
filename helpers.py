@@ -31,9 +31,6 @@ async def calculate_winner(satspot):
     ):
         satspot_players = satspot.players.split(",")
         winner = random.choice(satspot_players)
-        satspot.players = winner
-        satspot.completed = True
-        await update_satspot(satspot)
         # Calculate the total amount of winnings
         total_amount = satspot.buy_in * len(satspot_players)
         # Calculate the haircut amount
@@ -42,12 +39,21 @@ async def calculate_winner(satspot):
         max_sat = int(total_amount - haircut_amount)
         pr = await get_pr(winner, max_sat)
         if not pr:
+            satspot.completed = False
+            await update_satspot(satspot)
             return
-        await pay_invoice(
-            wallet_id=satspot.wallet,
-            payment_request=pr,
-            max_sat=max_sat,
-            description=f"({satspot.players}) won the satspot {satspot.name}!",
-        )
+        try:
+            await pay_invoice(
+                wallet_id=satspot.wallet,
+                payment_request=pr,
+                max_sat=max_sat,
+                description=f"({winner}) won the satspot {satspot.name}!",
+            )
+            satspot.players = winner
+            satspot.completed = True
+            await update_satspot(satspot)
+        except Exception:
+            satspot.completed = False
+            await update_satspot(satspot)
         return
     return
