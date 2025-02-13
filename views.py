@@ -24,17 +24,19 @@ async def index(request: Request, user: User = Depends(check_user_exists)):
 @satspot_generic_router.get("/{satspot_id}", response_class=HTMLResponse)
 async def display_satspot(request: Request, satspot_id: str):
     satspot = await get_satspot(satspot_id)
+    await calculate_winner(satspot)
     if satspot.completed:
         winner = satspot.players
     else:
         winner = None
-    await calculate_winner(satspot)
     satspot = await get_satspot(satspot_id)
+    amount = satspot.buy_in - (satspot.buy_in * (satspot.haircut / 100))
     return satspot_renderer().TemplateResponse(
         "satspot/satspot.html",
         {
             "satspot_id": satspot_id,
-            "winner": satspot.players,
+            "winner": winner,
             "request": request,
+            "pot": amount * (len(satspot.players.split(",")) - 1),
         },
     )

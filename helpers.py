@@ -47,6 +47,7 @@ async def calculate_winner(satspot):
             wallet_id=satspot.wallet,
             payment_request=pr,
             max_sat=max_sat,
-            description=f"You ({satspot.players}) flipping won the satspot {satspot.name}!",
+            description=f"({satspot.players}) won the satspot {satspot.name}!",
         )
         return
+    return

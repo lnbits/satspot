@@ -1,5 +1,5 @@
 {% extends "public.html" %} {% block page %}
-<q-card 
+<q-card
   class="fixed-center q-pa-xl"
   :style="{ width: $q.screen.lt.sm ? '100%' : '600px' }"
 >
@@ -29,8 +29,15 @@
           </div>
         </q-badge>
       </div>
+      <div class="col-auto">
+        <q-badge outline size="xl" color="secondary">
+          <div class="text-subtitle1">
+            Current pot: <span v-text="pot"></span>
+          </div>
+        </q-badge>
+      </div>
     </div>
-    
+
     <q-form @submit="joinGame" class="q-gutter-md">
       <q-input
         label="Your LNadress"
@@ -112,6 +119,7 @@
         gameComplete: false,
         satspotId: "{{ satspot_id }}",
         winner: "{{ winner }}",
+        pot: parseFloat("{{ pot }}"),
         paymentTick: false,
         satspot: {
           name: "",
@@ -185,6 +193,11 @@
             });
             this.qr.show = false;
             this.paymentTick = true;
+            this.pot =
+              this.pot +
+              (parseFloat(this.satspot.buy_in) -
+                parseFloat(this.satspot.buy_in) *
+                  (parseFloat(this.satspot.haircut) / 100));
             this.lnaddress = "";
             ws.close();
           }
