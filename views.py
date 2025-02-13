@@ -31,12 +31,17 @@ async def display_satspot(request: Request, satspot_id: str):
         winner = None
     satspot = await get_satspot(satspot_id)
     amount = satspot.buy_in - (satspot.buy_in * (satspot.haircut / 100))
+    players = satspot.players.split(",")
+    if players[0] == "":
+        amount = 0
+    else:
+        amount = amount * len(satspot.players.split(","))
     return satspot_renderer().TemplateResponse(
         "satspot/satspot.html",
         {
             "satspot_id": satspot_id,
             "winner": winner,
             "request": request,
-            "pot": amount * len(satspot.players.split(",")),
+            "pot": amount,
         },
     )
