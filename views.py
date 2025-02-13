@@ -37,6 +37,6 @@ async def display_satspot(request: Request, satspot_id: str):
             "satspot_id": satspot_id,
             "winner": winner,
             "request": request,
-            "pot": amount * (len(satspot.players.split(",")) - 1),
+            "pot": amount * len(satspot.players.split(",")),
         },
     )

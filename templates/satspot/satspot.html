@@ -119,7 +119,7 @@
         gameComplete: false,
         satspotId: "{{ satspot_id }}",
         winner: "{{ winner }}",
-        pot: parseFloat("{{ pot }}"),
+        pot: parseFloat("{{ pot }}").toFixed(1),
         paymentTick: false,
         satspot: {
           name: "",
@@ -193,11 +193,11 @@
             });
             this.qr.show = false;
             this.paymentTick = true;
-            this.pot =
-              this.pot +
-              (parseFloat(this.satspot.buy_in) -
-                parseFloat(this.satspot.buy_in) *
-                  (parseFloat(this.satspot.haircut) / 100));
+            this.pot = (
+              parseFloat(this.pot) +
+              (this.satspot.buy_in -
+                this.satspot.buy_in * (parseFloat(this.satspot.haircut) / 100))
+            ).toFixed(1);
             this.lnaddress = "";
             ws.close();
           }
