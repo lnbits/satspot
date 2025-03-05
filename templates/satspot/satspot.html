@@ -111,49 +111,49 @@
 {% endblock %} {% block scripts %}
 <script>
   window.app = Vue.createApp({
-    el: "#vue",
+    el: '#vue',
     mixins: [windowMixin],
     data() {
       return {
         activeGame: false,
         gameComplete: false,
-        satspotId: "{{ satspot_id }}",
-        winner: "{{ winner }}",
-        pot: parseFloat("{{ pot }}").toFixed(1),
+        satspotId: '{{ satspot_id }}',
+        winner: '{{ winner }}',
+        pot: parseFloat('{{ pot }}').toFixed(1),
         paymentTick: false,
         satspot: {
-          name: "",
+          name: '',
           number_of_players: 0,
-          buy_in: 0,
+          buy_in: 0
         },
         satspot: {},
-        lnaddress: "",
+        lnaddress: '',
         qr: {
           show: false,
-          payment_request: "",
-          payment_hash: "",
-        },
-      };
+          payment_request: '',
+          payment_hash: ''
+        }
+      }
     },
     methods: {
       getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
+        const urlParams = new URLSearchParams(window.location.search)
+        return urlParams.get(param)
       },
       async getGame() {
         const response = await LNbits.api.request(
-          "GET",
+          'GET',
           `/satspot/api/v1/satspot/satspot/${this.satspotId}`,
-          "",
-        );
+          ''
+        )
         if (response.data) {
-          this.satspot = response.data;
-          const date = new Date(this.satspot.closing_date);
+          this.satspot = response.data
+          const date = new Date(this.satspot.closing_date)
           this.satspot.closing_date = date
             .toISOString()
-            .replace("T", " ")
-            .slice(0, 19);
-          this.activeGame = true;
+            .replace('T', ' ')
+            .slice(0, 19)
+          this.activeGame = true
         }
       },
       async joinGame() {
@@ -161,68 +161,68 @@
           const data = {
             satspot_id: this.satspotId,
             settings_id: this.satspotPageId,
-            ln_address: this.lnaddress,
-          };
+            ln_address: this.lnaddress
+          }
           const response = await LNbits.api.request(
-            "POST",
-            "/satspot/api/v1/satspot/join/",
-            "",
-            data,
-          );
+            'POST',
+            '/satspot/api/v1/satspot/join/',
+            '',
+            data
+          )
           if (response.data) {
-            this.qr.payment_request = response.data.payment_request;
-            this.qr.payment_hash = response.data.payment_hash;
-            this.qr.show = true;
-            this.websocket();
+            this.qr.payment_request = response.data.payment_request
+            this.qr.payment_hash = response.data.payment_hash
+            this.qr.show = true
+            this.websocket()
           }
         } catch (error) {
-          LNbits.utils.notifyApiError(error);
+          LNbits.utils.notifyApiError(error)
         }
       },
       websocket() {
-        const url = new URL(window.location);
-        url.protocol = url.protocol === "https:" ? "wss" : "ws";
-        url.pathname = `/api/v1/ws/${this.qr.payment_hash}`;
-        const ws = new WebSocket(url);
-        ws.addEventListener("message", async ({ data }) => {
-          data = JSON.parse(data);
-          if (data["pending"] == false) {
+        const url = new URL(window.location)
+        url.protocol = url.protocol === 'https:' ? 'wss' : 'ws'
+        url.pathname = `/api/v1/ws/${this.qr.payment_hash}`
+        const ws = new WebSocket(url)
+        ws.addEventListener('message', async ({data}) => {
+          data = JSON.parse(data)
+          if (data['pending'] == false) {
             this.$q.notify({
-              type: "positive",
-              message: "Invoice paid, you joined the game!",
-            });
-            this.qr.show = false;
-            this.paymentTick = true;
+              type: 'positive',
+              message: 'Invoice paid, you joined the game!'
+            })
+            this.qr.show = false
+            this.paymentTick = true
             this.pot = (
               parseFloat(this.pot) +
               (this.satspot.buy_in -
                 this.satspot.buy_in * (parseFloat(this.satspot.haircut) / 100))
-            ).toFixed(1);
-            this.lnaddress = "";
-            ws.close();
+            ).toFixed(1)
+            this.lnaddress = ''
+            ws.close()
           }
-        });
+        })
       },
       copyText() {
         Quasar.copyToClipboard(window.location.href).then(() => {
           Quasar.Notify.create({
-            message: "Copied satspot link to clipboard!",
-            position: "bottom",
-          });
-        });
+            message: 'Copied satspot link to clipboard!',
+            position: 'bottom'
+          })
+        })
       },
       copyInvoice() {
         Quasar.copyToClipboard(this.qr.payment_request).then(() => {
           Quasar.Notify.create({
-            message: "Invoice URL copied to clipboard!",
-            position: "bottom",
-          });
-        });
-      },
+            message: 'Invoice URL copied to clipboard!',
+            position: 'bottom'
+          })
+        })
+      }
     },
     async mounted() {
-      await this.getGame();
-    },
-  });
+      await this.getGame()
+    }
+  })
 </script>
 {% endblock %}

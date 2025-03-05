@@ -1,5 +1,6 @@
 {
   "name": "Satspot",
+  "version": "1.0.0",
   "short_description": "Money pool games",
   "tile": "/satspot/static/image/satspot.png",
   "min_lnbits_version": "1.0.0",
