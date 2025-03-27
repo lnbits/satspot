@@ -28,7 +28,7 @@ async def run_by_the_minute_task():
         try:
             satspots = await get_all_pending_satspots()
             for satspot in satspots:
-                logger.error("Found pending satspot, caluclateing winner")
+                logger.error("Found pending satspot, calculating winner")
                 await calculate_winner(satspot)
         except Exception as ex:
             logger.error(ex)
