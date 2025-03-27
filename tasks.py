@@ -1,9 +1,7 @@
 import asyncio
-from datetime import datetime
 import random
 
 from lnbits.core.models import Payment
-from lnbits.core.services import pay_invoice
 from lnbits.tasks import register_invoice_listener
 
 from .crud import (
@@ -11,7 +9,7 @@ from .crud import (
     update_satspot,
     get_all_pending_satspots,
 )
-from .helpers import calculate_winner, get_pr
+from .helpers import calculate_winner
 from loguru import logger
 
 async def wait_for_paid_invoices():

@@ -59,7 +59,7 @@ async def api_join_satspot(data: JoinSatspotGame):
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="No game found")
     if satspot_game.completed:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail="This game is already full"
+            status_code=HTTPStatus.BAD_REQUEST, detail="Game already ended"
         )
     pay_req = await get_pr(data.ln_address, satspot_game.buy_in)
     if not pay_req:
