@@ -5,7 +5,7 @@ from lnbits.tasks import create_permanent_unique_task
 from loguru import logger
 
 from .crud import db
-from .tasks import wait_for_paid_invoices
+from .tasks import run_by_the_minute_task, wait_for_paid_invoices
 from .views import satspot_generic_router
 from .views_api import satspot_api_router
 
@@ -32,8 +32,12 @@ def satspot_stop():
 
 
 def satspot_start():
-    task = create_permanent_unique_task("ext_satspot", wait_for_paid_invoices)
-    scheduled_tasks.append(task)
+    task1 = create_permanent_unique_task("ext_satspot", wait_for_paid_invoices)
+    task2 = create_permanent_unique_task(
+        "ext_satspot_time_check", run_by_the_minute_task
+    )
+    scheduled_tasks.append(task1)
+    scheduled_tasks.append(task2)
 
 
 __all__ = ["db", "satspot_ext", "satspot_static_files"]

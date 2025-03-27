@@ -30,6 +30,11 @@ async def calculate_winner(satspot):
         and not satspot.completed
     ):
         satspot_players = satspot.players.split(",")
+        if satspot_players[0] == "":
+            satspot.completed = True
+            satspot.players = "No players"
+            await update_satspot(satspot)
+            return
         winner = random.choice(satspot_players)
         # Calculate the total amount of winnings
         total_amount = satspot.buy_in * len(satspot_players)

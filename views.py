@@ -5,7 +5,6 @@ from lnbits.decorators import check_user_exists
 from lnbits.helpers import template_renderer
 
 from .crud import get_satspot
-from .helpers import calculate_winner
 
 satspot_generic_router: APIRouter = APIRouter()
 
@@ -24,7 +23,6 @@ async def index(request: Request, user: User = Depends(check_user_exists)):
 @satspot_generic_router.get("/{satspot_id}", response_class=HTMLResponse)
 async def display_satspot(request: Request, satspot_id: str):
     satspot = await get_satspot(satspot_id)
-    await calculate_winner(satspot)
     if satspot.completed:
         winner = satspot.players
     else:

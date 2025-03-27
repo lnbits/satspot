@@ -35,5 +35,13 @@ async def get_satspots(user: str) -> List[Satspot]:
     )
 
 
+async def get_all_pending_satspots() -> List[Satspot]:
+    return await db.fetchall(
+        "SELECT * FROM satspot.satspot WHERE completed = :completed",
+        {"completed": 0},
+        Satspot,
+    )
+
+
 async def delete_satspot(satspot_id: str) -> None:
     await db.execute("DELETE FROM satspot.satspot WHERE id = :id", {"id": satspot_id})

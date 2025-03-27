@@ -1,15 +1,16 @@
 import asyncio
-from datetime import datetime
+import random
 
 from lnbits.core.models import Payment
-from lnbits.core.services import pay_invoice
 from lnbits.tasks import register_invoice_listener
+from loguru import logger
 
 from .crud import (
+    get_all_pending_satspots,
     get_satspot,
     update_satspot,
 )
-from .helpers import calculate_winner, get_pr
+from .helpers import calculate_winner
 
 
 async def wait_for_paid_invoices():
@@ -19,6 +20,21 @@ async def wait_for_paid_invoices():
     while True:
         payment = await invoice_queue.get()
         await on_invoice_paid(payment)
+
+
+async def run_by_the_minute_task():
+    minute_counter = 0
+    while True:
+        try:
+            satspots = await get_all_pending_satspots()
+            for satspot in satspots:
+                logger.error("Found pending satspot, calculating winner")
+                await calculate_winner(satspot)
+        except Exception as ex:
+            logger.error(ex)
+
+        minute_counter += 1
+        await asyncio.sleep(60 + random.randint(-3, 3))  # to avoid herd effect
 
 
 async def on_invoice_paid(payment: Payment) -> None:
@@ -32,31 +48,10 @@ async def on_invoice_paid(payment: Payment) -> None:
         # Check they are not trying to scam the system.
         if (payment.amount / 1000) != satspot.buy_in:
             return
-        await calculate_winner(satspot)
-        # If player joins late send a refund
-        if datetime.now().timestamp() > satspot.closing_date.timestamp():
-            satspot.completed = True
-            await update_satspot(satspot)
-
-            # Calculate the haircut amount
-            haircut_amount = satspot.buy_in * (satspot.haircut / 100)
-            # Calculate the refund amount
-            max_sat = int(satspot.buy_in - haircut_amount)
-            pr = await get_pr(ln_address, max_sat)
-            if not pr:
-                return
-            await pay_invoice(
-                wallet_id=satspot.wallet,
-                payment_request=pr,
-                max_sat=max_sat,
-                description="Refund. Satspot game was full.",
-            )
-            await calculate_winner(satspot)
-            return
-
         # Add the player to the game.
         if satspot.players == "":
             satspot.players = ln_address
         else:
             satspot.players = f"{satspot.players},{ln_address}"
         await update_satspot(satspot)
+        await calculate_winner(satspot)
