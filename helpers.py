@@ -9,6 +9,7 @@ from .crud import (
     update_satspot,
 )
 
+
 async def get_pr(ln_address, amount):
     data = await api_lnurlscan(ln_address)
     if data.get("status") == "ERROR":

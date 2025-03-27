@@ -5,7 +5,6 @@ from lnbits.decorators import check_user_exists
 from lnbits.helpers import template_renderer
 
 from .crud import get_satspot
-from .helpers import calculate_winner
 
 satspot_generic_router: APIRouter = APIRouter()
 

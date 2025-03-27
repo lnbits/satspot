@@ -3,14 +3,15 @@ import random
 
 from lnbits.core.models import Payment
 from lnbits.tasks import register_invoice_listener
+from loguru import logger
 
 from .crud import (
+    get_all_pending_satspots,
     get_satspot,
     update_satspot,
-    get_all_pending_satspots,
 )
 from .helpers import calculate_winner
-from loguru import logger
+
 
 async def wait_for_paid_invoices():
     invoice_queue = asyncio.Queue()
@@ -19,6 +20,7 @@ async def wait_for_paid_invoices():
     while True:
         payment = await invoice_queue.get()
         await on_invoice_paid(payment)
+
 
 async def run_by_the_minute_task():
     minute_counter = 0
@@ -32,7 +34,8 @@ async def run_by_the_minute_task():
             logger.error(ex)
 
         minute_counter += 1
-        await asyncio.sleep(60 + random.randint(-3, 3)) # to avoid herd effect
+        await asyncio.sleep(60 + random.randint(-3, 3))  # to avoid herd effect
+
 
 async def on_invoice_paid(payment: Payment) -> None:
     if payment.extra.get("tag") == "satspot":
