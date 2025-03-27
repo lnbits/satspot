@@ -28,6 +28,7 @@ async def run_by_the_minute_task():
         try:
             satspots = await get_all_pending_satspots()
             for satspot in satspots:
+                logger.error("Found pending satspot, caluclateing winner")
                 await calculate_winner(satspot)
         except Exception as ex:
             logger.error(ex)
@@ -46,31 +47,10 @@ async def on_invoice_paid(payment: Payment) -> None:
         # Check they are not trying to scam the system.
         if (payment.amount / 1000) != satspot.buy_in:
             return
-        await calculate_winner(satspot)
-        # If player joins late send a refund
-        if datetime.now().timestamp() > satspot.closing_date.timestamp():
-            satspot.completed = True
-            await update_satspot(satspot)
-
-            # Calculate the haircut amount
-            haircut_amount = satspot.buy_in * (satspot.haircut / 100)
-            # Calculate the refund amount
-            max_sat = int(satspot.buy_in - haircut_amount)
-            pr = await get_pr(ln_address, max_sat)
-            if not pr:
-                return
-            await pay_invoice(
-                wallet_id=satspot.wallet,
-                payment_request=pr,
-                max_sat=max_sat,
-                description="Refund. Satspot game was full.",
-            )
-            await calculate_winner(satspot)
-            return
-
         # Add the player to the game.
         if satspot.players == "":
             satspot.players = ln_address
         else:
             satspot.players = f"{satspot.players},{ln_address}"
         await update_satspot(satspot)
+        await calculate_winner(satspot)

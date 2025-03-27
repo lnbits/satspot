@@ -24,7 +24,6 @@ async def index(request: Request, user: User = Depends(check_user_exists)):
 @satspot_generic_router.get("/{satspot_id}", response_class=HTMLResponse)
 async def display_satspot(request: Request, satspot_id: str):
     satspot = await get_satspot(satspot_id)
-    await calculate_winner(satspot)
     if satspot.completed:
         winner = satspot.players
     else:

@@ -4,7 +4,6 @@ from lnbits.db import Database
 from lnbits.helpers import urlsafe_short_hash
 
 from .models import CreateSatspot, Satspot
-
 db = Database("ext_satspot")
 
 
