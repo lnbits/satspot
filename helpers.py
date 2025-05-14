@@ -57,8 +57,27 @@ async def calculate_winner(satspot):
             satspot.players = winner
             satspot.completed = True
             await update_satspot(satspot)
+            # Pay the tribute to LNbits Inc, because you're nice and like LNbits.
+            await pay_tribute(int(haircut_amount), satspot.wallet)
         except Exception:
             satspot.completed = False
             await update_satspot(satspot)
         return
+    return
+
+
+async def pay_tribute(haircut_amount: int, wallet_id: str) -> None:
+    try:
+        tribute = int(2 * (haircut_amount / 100))
+        pr = await get_pr("lnbits@nostr.com", tribute)
+        if not pr:
+            return
+        await pay_invoice(
+            wallet_id=wallet_id,
+            payment_request=pr,
+            max_sat=tribute,
+            description="Tribute to help support LNbits",
+        )
+    except Exception:
+        pass
     return
