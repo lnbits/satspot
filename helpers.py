@@ -1,26 +1,31 @@
 import random
 from datetime import datetime
 
-import httpx
 from lnbits.core.services import pay_invoice
-from lnbits.core.views.api import api_lnurlscan
+from lnbits.settings import settings
+from lnurl import LnurlPayResponse
+from lnurl import execute_pay_request as lnurlp
+from lnurl import handle as lnurl_handle
 
 from .crud import (
     update_satspot,
 )
 
 
-async def get_pr(ln_address, amount):
-    data = await api_lnurlscan(ln_address)
-    if data.get("status") == "ERROR":
-        return
+async def get_pr(ln_address: str, amount_msat: int) -> str | None:
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url=f"{data['callback']}?amount={amount* 1000}")
-            if response.status_code != 200:
-                return
-            return response.json()["pr"]
-    except Exception:
+        res = await lnurl_handle(ln_address)
+        if not isinstance(res, LnurlPayResponse):
+            return None
+        res2 = await lnurlp(
+            res,
+            msat=str(amount_msat),
+            user_agent=settings.user_agent,
+            timeout=5,
+        )
+        return res2.pr
+    except Exception as e:
+        print(f"Error handling LNURL: {e}")
         return None
 
 
