@@ -1,10 +1,8 @@
 import random
 from datetime import datetime
 
-from lnbits.core.services import pay_invoice
-from lnbits.settings import settings
+from lnbits.core.services import get_pr_from_lnurl, pay_invoice
 from lnurl import LnurlPayResponse
-from lnurl import execute_pay_request as lnurlp
 from lnurl import handle as lnurl_handle
 
 from .crud import (
@@ -12,21 +10,14 @@ from .crud import (
 )
 
 
-async def get_pr(ln_address: str, amount_msat: int) -> str | None:
+async def check_lnaddress(address: str) -> bool:
     try:
-        res = await lnurl_handle(ln_address)
-        if not isinstance(res, LnurlPayResponse):
-            return None
-        res2 = await lnurlp(
-            res,
-            msat=str(amount_msat),
-            user_agent=settings.user_agent,
-            timeout=5,
-        )
-        return res2.pr
-    except Exception as e:
-        print(f"Error handling LNURL: {e}")
-        return None
+        res = lnurl_handle(address)
+    except Exception:
+        return False
+    if not isinstance(res, LnurlPayResponse):
+        return False
+    return True
 
 
 async def calculate_winner(satspot):
@@ -47,8 +38,9 @@ async def calculate_winner(satspot):
         haircut_amount = total_amount * (satspot.haircut / 100)
         # Calculate the winnings minus haircut
         max_sat = int(total_amount - haircut_amount)
-        pr = await get_pr(winner, max_sat)
-        if not pr:
+        try:
+            pr = await get_pr_from_lnurl(winner, max_sat)
+        except Exception:
             satspot.completed = False
             await update_satspot(satspot)
             return
@@ -74,8 +66,9 @@ async def calculate_winner(satspot):
 async def pay_tribute(haircut_amount: int, wallet_id: str) -> None:
     try:
         tribute = int(2 * (haircut_amount / 100))
-        pr = await get_pr("lnbits@nostr.com", tribute)
-        if not pr:
+        try:
+            pr = await get_pr_from_lnurl("lnbits@nostr.com", tribute)
+        except Exception:
             return
         await pay_invoice(
             wallet_id=wallet_id,

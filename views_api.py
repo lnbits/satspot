@@ -15,7 +15,7 @@ from .crud import (
     get_satspot,
     get_satspots,
 )
-from .helpers import get_pr
+from .helpers import check_lnaddress
 from .models import CreateSatspot, Getgame, JoinSatspotGame
 
 satspot_api_router = APIRouter()
@@ -61,8 +61,7 @@ async def api_join_satspot(data: JoinSatspotGame):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="Game already ended"
         )
-    pay_req = await get_pr(data.ln_address, satspot_game.buy_in)
-    if not pay_req:
+    if not await check_lnaddress(data.ln_address):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="lnaddress check failed"
         )
