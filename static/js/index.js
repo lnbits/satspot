@@ -1,10 +1,16 @@
+const toDate = v => {
+  // Convert Unix seconds → ms
+  if (typeof v === 'number') return new Date(v < 1e12 ? v * 1000 : v)
+  return new Date(v)
+}
+
 const mapSatspots = obj => {
-  obj._data = _.clone(obj)
-  obj.closing_date = Quasar.date.formatDate(
-    new Date(obj.closing_date),
-    'YYYY-MM-DD HH:mm'
-  )
-  return obj
+  const closing = toDate(obj.closing_date)
+  return {
+    ...obj,
+    _data: {...obj},
+    closing_date: Quasar.date.formatDate(closing, 'YYYY-MM-DD HH:mm:ss')
+  }
 }
 
 window.app = Vue.createApp({
@@ -75,7 +81,7 @@ window.app = Vue.createApp({
         )
         .then(response => {
           if (response.data != null) {
-            this.satspots = response.data
+            this.satspots = response.data.map(mapSatspots)
           }
         })
         .catch(err => {

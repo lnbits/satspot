@@ -2,22 +2,10 @@ import random
 from datetime import datetime
 
 from lnbits.core.services import get_pr_from_lnurl, pay_invoice
-from lnurl import LnurlPayResponse
-from lnurl import handle as lnurl_handle
 
 from .crud import (
     update_satspot,
 )
-
-
-async def check_lnaddress(address: str) -> bool:
-    try:
-        res = lnurl_handle(address)
-    except Exception:
-        return False
-    if not isinstance(res, LnurlPayResponse):
-        return False
-    return True
 
 
 async def calculate_winner(satspot):
@@ -39,7 +27,7 @@ async def calculate_winner(satspot):
         # Calculate the winnings minus haircut
         max_sat = int(total_amount - haircut_amount)
         try:
-            pr = await get_pr_from_lnurl(winner, max_sat)
+            pr = await get_pr_from_lnurl(winner, max_sat * 1000)
         except Exception:
             satspot.completed = False
             await update_satspot(satspot)
@@ -67,7 +55,7 @@ async def pay_tribute(haircut_amount: int, wallet_id: str) -> None:
     try:
         tribute = int(2 * (haircut_amount / 100))
         try:
-            pr = await get_pr_from_lnurl("lnbits@nostr.com", tribute)
+            pr = await get_pr_from_lnurl("lnbits@nostr.com", tribute * 1000)
         except Exception:
             return
         await pay_invoice(

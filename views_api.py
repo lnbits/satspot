@@ -6,6 +6,8 @@ from lnbits.core.crud import get_user
 from lnbits.core.models import WalletTypeInfo
 from lnbits.core.services import create_invoice
 from lnbits.decorators import require_admin_key
+from lnurl import LnurlPayResponse
+from lnurl import handle as lnurl_handle
 from loguru import logger
 from starlette.exceptions import HTTPException
 
@@ -15,7 +17,6 @@ from .crud import (
     get_satspot,
     get_satspots,
 )
-from .helpers import check_lnaddress
 from .models import CreateSatspot, Getgame, JoinSatspotGame
 
 satspot_api_router = APIRouter()
@@ -61,9 +62,16 @@ async def api_join_satspot(data: JoinSatspotGame):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="Game already ended"
         )
-    if not await check_lnaddress(data.ln_address):
+    try:
+        res = await lnurl_handle(data.ln_address)
+    except Exception as exc:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail="lnaddress check failed"
+            status_code=HTTPStatus.BAD_REQUEST, detail=f"lnaddress error: {exc!s}"
+        ) from exc
+    if not isinstance(res, LnurlPayResponse):
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="lnaddress return wrong response type",
         )
     payment = await create_invoice(
         wallet_id=satspot_game.wallet,
