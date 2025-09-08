@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 from fastapi import Query
 from pydantic import BaseModel
@@ -13,9 +12,9 @@ class CreateSatspot(BaseModel):
 
 
 class Satspot(BaseModel):
-    id: Optional[str] = None
+    id: str | None = None
     wallet: str
-    user: Optional[str] = None
+    user: str | None = None
     name: str
     closing_date: datetime
     buy_in: int = 0
@@ -26,7 +25,7 @@ class Satspot(BaseModel):
 
 
 class Getgame(BaseModel):
-    id: Optional[str] = None
+    id: str | None = None
     name: str
     closing_date: datetime
     buy_in: int = 0
