@@ -40,4 +40,4 @@ def satspot_start():
     scheduled_tasks.append(task2)
 
 
-__all__ = ["db", "satspot_ext", "satspot_start", "satspot_stop", "satspot_static_files"]
+__all__ = ["db", "satspot_ext", "satspot_start", "satspot_static_files", "satspot_stop"]

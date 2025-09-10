@@ -3,7 +3,6 @@ import random
 
 from lnbits.core.models import Payment
 from lnbits.tasks import register_invoice_listener
-from loguru import logger
 
 from .crud import (
     get_all_pending_satspots,

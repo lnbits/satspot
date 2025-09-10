@@ -1,5 +1,4 @@
 import random
-from datetime import datetime
 
 from lnbits.core.services import get_pr_from_lnurl, pay_invoice
 
