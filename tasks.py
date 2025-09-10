@@ -25,16 +25,12 @@ async def wait_for_paid_invoices():
 async def run_by_the_minute_task():
     minute_counter = 0
     while True:
-        try:
-            satspots = await get_all_pending_satspots()
-            for satspot in satspots:
-                logger.debug("Found pending satspot, calculating winner")
-                await calculate_winner(satspot)
-        except Exception as ex:
-            logger.error(ex)
+        satspots = await get_all_pending_satspots()
+        for satspot in satspots:
+            await calculate_winner(satspot)
 
         minute_counter += 1
-        await asyncio.sleep(60 + random.randint(-3, 3))  # to avoid herd effect
+        await asyncio.sleep(60 + random.randint(-3, 3))
 
 
 async def on_invoice_paid(payment: Payment) -> None:

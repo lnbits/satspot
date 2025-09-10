@@ -1,6 +1,6 @@
 {% extends "public.html" %} {% block page %}
 <q-card
-  class="fixed-center q-pa-xl"
+  class="fixed-center q-pa-xl q-pl-xs"
   :style="{ width: $q.screen.lt.sm ? '100%' : '600px' }"
 >
   <q-card-section class="q-pa-none" v-if="activeGame && !satspot.completed">
@@ -77,7 +77,7 @@
     <center>
       <h2 class="q-my-none">Game Complete</h2>
       <h5 class="q-my-none"><span v-text="winner"></span></h5>
-      <q-icon color="teal" name="check" size="30em"></q-icon>
+      <q-icon color="teal" name="check" size="20em"></q-icon>
     </center>
   </q-card-section>
 </q-card>

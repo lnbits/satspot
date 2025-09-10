@@ -1,5 +1,6 @@
 from lnbits.db import Database
 from lnbits.helpers import urlsafe_short_hash
+from datetime import datetime
 
 from .models import CreateSatspot, Satspot
 
@@ -35,8 +36,8 @@ async def get_satspots(user: str) -> list[Satspot]:
 
 async def get_all_pending_satspots() -> list[Satspot]:
     return await db.fetchall(
-        "SELECT * FROM satspot.satspot WHERE completed = :completed",
-        {"completed": 0},
+        "SELECT * FROM satspot.satspot WHERE completed = :completed AND closing_date < :current_time",
+        {"completed": 0, "current_time": int(datetime.now().timestamp())},
         Satspot,
     )
 
