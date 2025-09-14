@@ -94,12 +94,12 @@ async def api_satspot_delete(
     satspot = await get_satspot(satspot_id)
     if not satspot:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Pay link does not exist."
+            status_code=HTTPStatus.NOT_FOUND, detail="Satspot does not exist."
         )
 
     if satspot.wallet != key_info.wallet.id:
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail="Not your pay link."
+            status_code=HTTPStatus.FORBIDDEN, detail="Not your satspot."
         )
 
     await delete_satspot(satspot_id)

@@ -14,7 +14,7 @@ class CreateSatspot(BaseModel):
 class Satspot(BaseModel):
     id: str | None = None
     wallet: str
-    user: str | None = None
+    user_id: str | None = None
     name: str
     closing_date: datetime
     buy_in: int = 0

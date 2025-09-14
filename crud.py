@@ -8,10 +8,10 @@ from .models import CreateSatspot, Satspot
 db = Database("ext_satspot")
 
 
-async def create_satspot(data: CreateSatspot, wallet, user) -> list[Satspot]:
-    satspot = Satspot(**data.dict(), id=urlsafe_short_hash(), wallet=wallet, user=user)
+async def create_satspot(data: CreateSatspot, wallet, user_id) -> list[Satspot]:
+    satspot = Satspot(**data.dict(), id=urlsafe_short_hash(), wallet=wallet, user_id=user_id)
     await db.insert("satspot.satspot", satspot)
-    return await get_satspots(user)
+    return await get_satspots(user_id)
 
 
 async def update_satspot(satspot: Satspot) -> Satspot:
@@ -27,29 +27,20 @@ async def get_satspot(satspot_id: str) -> Satspot:
     )
 
 
-async def get_satspots(user: str) -> list[Satspot]:
+async def get_satspots(user_id: str) -> list[Satspot]:
     return await db.fetchall(
-        "SELECT * FROM satspot.satspot WHERE user = :user",
-        {"user": user},
+        "SELECT * FROM satspot.satspot WHERE user_id = :user_id",
+        {"user_id": user_id},
         Satspot,
     )
 
 
 async def get_all_pending_satspots() -> list[Satspot]:
     return await db.fetchall(
-        """
-        SELECT *
-        FROM satspot.satspot
-        WHERE completed = :completed
-          AND closing_date < :current_time
-        """,
-        {
-            "completed": 0,
-            "current_time": int(datetime.now().timestamp()),
-        },
+        f"SELECT * FROM satspot.satspot WHERE completed = :completed AND closing_date < {db.timestamp_now}",
+        {"completed": False},
         Satspot,
     )
-
 
 async def delete_satspot(satspot_id: str) -> None:
     await db.execute("DELETE FROM satspot.satspot WHERE id = :id", {"id": satspot_id})
