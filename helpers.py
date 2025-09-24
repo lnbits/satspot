@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 
 from lnbits.core.services import get_pr_from_lnurl, pay_invoice
 
@@ -8,6 +9,10 @@ from .crud import (
 
 
 async def calculate_winner(satspot):
+    if satspot.completed:
+        return
+    if datetime.now().timestamp() < satspot.closing_date.timestamp():
+        return
     satspot_players = satspot.players.split(",")
     if satspot_players[0] == "":
         satspot.completed = True
