@@ -148,11 +148,10 @@
         )
         if (response.data) {
           this.satspot = response.data
-          const date = new Date(this.satspot.closing_date)
-          this.satspot.closing_date = date
-            .toISOString()
-            .replace('T', ' ')
-            .slice(0, 19)
+          this.satspot.closing_date = Quasar.date.formatDate(
+            new Date(this.satspot.closing_date),
+            'YYYY-MM-DD HH:mm'
+          )
           this.activeGame = true
         }
       },
