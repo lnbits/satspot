@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 from fastapi import Query
 from pydantic import BaseModel, validator
@@ -11,10 +11,11 @@ class CreateSatspot(BaseModel):
     buy_in: int = 0
 
     @validator("closing_date", pre=True, always=True)
-    def force_utc(cls, v):
+    def force_utc(cls, v):  # noqa: N805
         if isinstance(v, datetime):
             return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
         return datetime.fromtimestamp(int(v), tz=timezone.utc)
+
 
 class Satspot(BaseModel):
     id: str | None = None
@@ -29,10 +30,11 @@ class Satspot(BaseModel):
     created_at: datetime = datetime.now(timezone.utc)
 
     @validator("closing_date", pre=True, always=True)
-    def force_utc(cls, v):
+    def force_utc(cls, v):  # noqa: N805
         if isinstance(v, datetime):
             return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
         return datetime.fromtimestamp(int(v), tz=timezone.utc)
+
 
 class Getgame(BaseModel):
     id: str | None = None
@@ -43,10 +45,11 @@ class Getgame(BaseModel):
     completed: bool = False
 
     @validator("closing_date", pre=True, always=True)
-    def force_utc(cls, v):
+    def force_utc(cls, v):  # noqa: N805
         if isinstance(v, datetime):
             return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
         return datetime.fromtimestamp(int(v), tz=timezone.utc)
+
 
 class JoinSatspotGame(BaseModel):
     satspot_id: str = Query(None)
