@@ -1,3 +1,5 @@
+from time import time
+
 from lnbits.db import Database
 from lnbits.helpers import urlsafe_short_hash
 
@@ -37,8 +39,11 @@ async def get_satspots(user_id: str) -> list[Satspot]:
 
 async def get_all_pending_satspots() -> list[Satspot]:
     return await db.fetchall(
-        "SELECT * FROM satspot.satspot WHERE completed = :c AND closing_date < :cd",
-        {"c": False, "cd": db.timestamp_now},
+        f"""
+        SELECT * FROM satspot.satspot WHERE completed = :c
+        AND closing_date < {db.timestamp_placeholder('now')}
+        """,
+        {"c": False, "now": time()},
         Satspot,
     )
 
