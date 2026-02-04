@@ -2,8 +2,7 @@ async def m001_add_satspot(db):
     """
     Creates a hash check table.
     """
-    await db.execute(
-        f"""
+    await db.execute(f"""
         CREATE TABLE satspot.satspot (
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
@@ -16,5 +15,4 @@ async def m001_add_satspot(db):
             completed BOOLEAN,
             created_at TIMESTAMP NOT NULL DEFAULT {db.timestamp_now}
         );
-        """
-    )
+        """)
