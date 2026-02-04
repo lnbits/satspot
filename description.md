@@ -1,6 +1,13 @@
-Satspot
+Create lottery pools where users pay to join and a random winner takes all.
 
-- Create satspots, pay to join, random user gets all the winnings (-haircut)
+Its functions include:
 
-Gambling is dangerous, gamble responsibly.
+- Setting entry fees and pool sizes
+- Randomly selecting winners from participants
+- Collecting a configurable house fee
+- Automatically paying out winners via Lightning
+
+A pooled lottery game where participants compete for a shared pot with automatic winner selection and Lightning payouts.
+
+Gambling is dangerous and can be addictive, gamble responsibly.
 https://www.gambleaware.org
