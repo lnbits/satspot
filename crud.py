@@ -10,7 +10,7 @@ db = Database("ext_satspot")
 
 async def create_satspot(data: CreateSatspot, wallet, user_id) -> list[Satspot]:
     satspot = Satspot(
-        **data.dict(), id=urlsafe_short_hash(), wallet=wallet, user_id=user_id
+        **data.model_dump(), id=urlsafe_short_hash(), wallet=wallet, user_id=user_id
     )
     await db.insert("satspot.satspot", satspot)
     return await get_satspots(user_id)
