@@ -16,7 +16,7 @@ def satspot_renderer():
 @satspot_generic_router.get("/", response_class=HTMLResponse)
 async def index(request: Request, user: User = Depends(check_user_exists)):
     return satspot_renderer().TemplateResponse(
-        "satspot/index.html", {"request": request, "user": user.json()}
+        "satspot/index.html", {"request": request, "user": user.model_dump_json()}
     )
 
 

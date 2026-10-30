@@ -54,6 +54,11 @@ async def api_get_satspots(
 
 @satspot_api_router.post("/api/v1/satspot/join/", status_code=HTTPStatus.OK)
 async def api_join_satspot(data: JoinSatspotGame):
+    if data.satspot_id is None or data.ln_address is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Game and Lightning address are required",
+        )
     satspot_game = await get_satspot(data.satspot_id)
     logger.debug(satspot_game)
     if not satspot_game:
