@@ -10,12 +10,10 @@ class CreateSatspot(BaseModel):
     closing_date: datetime
     buy_in: int = 0
 
-    @field_validator("closing_date", mode="before")
+    @field_validator("closing_date")
     @classmethod
-    def force_utc(cls, v):
-        if isinstance(v, datetime):
-            return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
-        return datetime.fromtimestamp(int(v), tz=timezone.utc)
+    def force_utc(cls, v: datetime) -> datetime:
+        return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
 
 
 class Satspot(BaseModel):
@@ -30,12 +28,10 @@ class Satspot(BaseModel):
     completed: bool = False
     created_at: datetime = datetime.now(timezone.utc)
 
-    @field_validator("closing_date", mode="before")
+    @field_validator("closing_date")
     @classmethod
-    def force_utc(cls, v):
-        if isinstance(v, datetime):
-            return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
-        return datetime.fromtimestamp(int(v), tz=timezone.utc)
+    def force_utc(cls, v: datetime) -> datetime:
+        return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
 
 
 class Getgame(BaseModel):
@@ -46,12 +42,10 @@ class Getgame(BaseModel):
     haircut: int = 0
     completed: bool = False
 
-    @field_validator("closing_date", mode="before")
+    @field_validator("closing_date")
     @classmethod
-    def force_utc(cls, v):
-        if isinstance(v, datetime):
-            return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
-        return datetime.fromtimestamp(int(v), tz=timezone.utc)
+    def force_utc(cls, v: datetime) -> datetime:
+        return v if v.tzinfo else v.replace(tzinfo=timezone.utc)
 
 
 class JoinSatspotGame(BaseModel):
