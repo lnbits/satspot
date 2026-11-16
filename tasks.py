@@ -34,11 +34,17 @@ async def run_by_the_minute_task():
 
 async def on_invoice_paid(payment: Payment) -> None:
     if payment.extra.get("tag") == "satspot":
-        ln_address = payment.extra["ln_address"]
+        ln_address = payment.extra.get("ln_address")
+        if (
+            not isinstance(ln_address, str)
+            or not ln_address.strip()
+            or "," in ln_address
+        ):
+            return
         satspot_id = payment.extra["satspot_id"]
         # fetch details
         satspot = await get_satspot(satspot_id)
-        if not satspot:
+        if not satspot or payment.wallet_id != satspot.wallet:
             return
         # Check they are not trying to scam the system.
         if (payment.amount / 1000) != satspot.buy_in:
